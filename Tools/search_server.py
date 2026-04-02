@@ -3,11 +3,20 @@
 # STABLE MCP SERVER using Tavily API
 # ============================================================
 
+import os
+
 from mcp.server.fastmcp import FastMCP
 from tavily import TavilyClient
 
-# Replace with your actual key from tavily.com
-TAVILY_API_KEY = ""
+try:
+    from dotenv import load_dotenv
+except Exception:
+    load_dotenv = None
+
+if load_dotenv is not None:
+    load_dotenv()
+
+TAVILY_API_KEY = os.getenv("TAVILY_API_KEY", "").strip()
 
 mcp = FastMCP("search")
 tavily = TavilyClient(api_key=TAVILY_API_KEY)
@@ -16,6 +25,8 @@ tavily = TavilyClient(api_key=TAVILY_API_KEY)
 def search_web(query: str) -> str:
     """Search the web for real-time information.
     Use this for factual questions, historical data, or general lookups."""
+    if not TAVILY_API_KEY:
+        return "Search error: missing TAVILY_API_KEY in environment."
     try:
         # depth="basic" is faster and costs 1 credit
         response = tavily.search(query=query, search_depth="basic", max_results=3)
@@ -35,6 +46,8 @@ def search_web(query: str) -> str:
 def search_news(query: str) -> str:
     """Search for the latest news articles on a topic.
     Use this for recent events, announcements, or developments within the last month."""
+    if not TAVILY_API_KEY:
+        return "News search error: missing TAVILY_API_KEY in environment."
     try:
         # topic="news" triggers Tavily's news-specific crawler
         response = tavily.search(query=query, topic="news", search_depth="basic", max_results=3)
