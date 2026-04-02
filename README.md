@@ -60,3 +60,51 @@ Notes
 You may use any LLM (local or API)
 Focus on correctness and flow rather than optimization
 Keep your implementation clean and readable
+
+## Run Setup
+
+### 1. Install dependencies
+
+```powershell
+pip install -r requirements.txt
+```
+
+### 2. Configure environment variables
+
+Create a `.env` file in the project root and set at least:
+
+```env
+GROQ_API_KEY=your_groq_api_key
+GROQ_MODEL=llama3-8b-8192
+```
+
+Optional (only if you want weather MCP over HTTP):
+
+```env
+WEATHER_MCP_URL=http://localhost:8000/mcp
+```
+
+### 3. Optional: start weather MCP server
+
+Only needed when your planned steps call weather tools.
+
+```powershell
+python Tools/weather_server.py
+```
+
+### 4. Run the LangGraph planner-executor
+
+```powershell
+python main.py
+```
+
+The default test goal is:
+
+"Fetch Q3 sales data and summarize it."
+
+The workflow runs as:
+
+START -> planner_node -> executor_node -> (loop per step) -> END
+
+## Results
+Result.md contains the result to the agent's goal.
